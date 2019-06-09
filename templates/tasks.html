@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+
+<head>
+    <style>
+        table {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        td,
+        th {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #dddddd;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>List of tasks</h2>
+    <table>
+        <tr>
+            <th>Task name</th>
+            <th>User</th>
+            <th>Active state</th>
+            <th>Change state</th>
+            <th>Action</th>
+        </tr>
+
+        {% for task in tasks %}
+        <tr>
+            <td>{{ task.task_name }}</td>
+            <th>{{ task.user.user_name}} </th>
+            <th>{{ task.active_state.state_name }}</th>
+            <th>
+                <form action="/tasks/states" method="POST">
+                    <select name="state">
+                        {% for s in states %}
+                        <option value={{s.state_id}}>{{s.state_name}}</option>
+                        {% endfor %}
+                    </select>
+                    <input type="hidden" name="task" value={{task.task_id}}/>
+                    <input type="submit" value="Apply">
+                </form>
+            </th>
+            <td>
+                <form action="/tasks/delete" method="POST">
+                    <input type="hidden" value={{task.task_id}} name="id" />
+                    <input type="submit" value="Delete" />
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h3>Search:</h3>
+    <form action="/tasks" method="POST">
+        <label>Search by task name</label>
+        <input name="task_name" />
+        <label>Search by active state</label>
+        <input name="state" />
+        <input type="submit" />
+    </form>
+
+    <h3>Create task</h3>
+    <form action="/tasks/create" method="POST">
+        <label>Name</label>
+        <input name="task_name" />
+        <br>
+        <select name="state">
+            {% for s in states %}
+            <option value={{s.state_id}}>{{s.state_name}}</option>
+            {% endfor %}
+            </select>
+        <br>
+        <label>User</label>
+        <select name="user">
+                {% for u in users %}
+                <option value={{u.user_id}}>{{u.user_name}}</option>
+                {% endfor %}
+            </select>
+        <input type="submit" />
+    </form>
+
+    <h3>Count of tasks per state</h3>
+    <div id="tasks-per-state" class="bar"></div>
+    <h3>Count of tasks per user</h3>
+    <div id="tasks-per-user" class="bar"></div>
+
+
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    
+    <script type="text/javascript">
+        Plotly.plot("tasks-per-state", {{tasksPerStateJson | safe}},{});
+        Plotly.plot("tasks-per-user", {{tasksPerUserJson | safe}},{});
+    </script>
+
+</body>

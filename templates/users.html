@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<head>
+    <style>
+        table {
+          font-family: arial, sans-serif;
+          border-collapse: collapse;
+          width: 100%;
+        }
+        
+        td, th {
+          border: 1px solid #dddddd;
+          text-align: left;
+          padding: 8px;
+        }
+        
+        tr:nth-child(even) {
+          background-color: #dddddd;
+        }
+        </style>
+</head>
+<body>
+    <h2>List of users</h2>
+    <table>
+        <tr>
+            <th>Username</th>
+            <th>User email</th>
+            <th>Registration date</th>
+            <th>Action</th>
+        </tr>
+        {% for user in users %}
+        <tr>
+            <td>{{ user.user_name }}</td>
+            <td>{{ user.user_email }}</td>
+            <td>{{ user.user_registration }}</td>
+            <td>
+                <form action="/users/delete" method="POST">
+                    <input type="hidden" value={{user.user_id}} name="id"/>
+                    <input type="submit" value="Delete"/>
+                </form>
+            </td>
+        </tr>
+    {% endfor %}
+    </table>
+
+    <h3> Create user </h3>
+    <form action="/users" method="POST">
+        <label>Email:</label>
+        <input type="email" name="user_email"/>
+        <br>
+        <label>Name:</label>
+        <input type="text" name="user_name"/>
+        <br>
+        <input type="submit" value="Create"/>
+    </form>
+</body>
